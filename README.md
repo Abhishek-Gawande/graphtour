@@ -15,7 +15,7 @@ Built for the **WeMakeDevs × Cognee** hackathon
 A new contributor drops into an unfamiliar repo and asks the questions grep can't answer:
 - *"What breaks if I change this function?"* (impact)
 - *"Who should I ask about this module?"* (ownership)
-- *"Why does this even exist — which PR introduced it?"* (provenance)
+- *"Why does this even exist , which PR introduced it?"* (provenance)
 
 These are **relationship** questions. Keyword search and plain RAG can't follow the
 edges between files, commits, authors, and PRs. A graph can.
@@ -36,9 +36,9 @@ memory lifecycle to keep that graph honest as the repo evolves:
 
 ## Backends
 
-One code path, two backends — selected by `COGNEE_BACKEND` in `.env`:
-- **cloud** — [Cognee Cloud](https://platform.cognee.ai)
-- **local** — self-hosted, open-source Cognee
+One code path, two backends , selected by `COGNEE_BACKEND` in `.env`:
+- **cloud**  [Cognee Cloud](https://platform.cognee.ai)
+- **local**  self-hosted, open-source Cognee
 
 ## Quickstart
 
@@ -51,12 +51,12 @@ python cli.py smoke         # verify the connection
 
 ## Status
 
-- [x] Batch 0 — scaffold, config switch, connection smoke test
-- [ ] Batch 1 — ingest a repo into the graph
-- [ ] Batch 2 — impact / ownership / provenance queries
-- [ ] Batch 3 — `improve()` + `forget()` on repo changes
-- [ ] Batch 4 — UX + demo
-- [ ] Batch 5 — README polish, demo video, submission
+- [x] Batch 0  scaffold, config switch, connection smoke test
+- [ ] Batch 1  ingest a repo into the graph
+- [ ] Batch 2  impact / ownership / provenance queries
+- [ ] Batch 3  `improve()` + `forget()` on repo changes
+- [ ] Batch 4  UX + demo
+- [ ] Batch 5  README polish, demo video, submission
 
 ---
 
