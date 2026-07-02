@@ -1,0 +1,30 @@
+# Secrets — never commit
+.env
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Cognee / local stores & caches
+.cognee_system/
+.data_storage/
+cognee_data/
+*.db
+*.sqlite
+
+# Cloned demo repos (ingested, not part of our source)
+demo/target_repo/
+
+# Claude Code local settings (personal, machine-specific)
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

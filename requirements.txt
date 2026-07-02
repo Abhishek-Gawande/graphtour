@@ -1,0 +1,2 @@
+cognee
+python-dotenv
