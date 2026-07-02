@@ -28,6 +28,10 @@ def main() -> None:
         from src.smoke_test import main as smoke_main
 
         asyncio.run(smoke_main())
+    elif args.command == "ingest":
+        from src.ingest import run_ingest
+
+        asyncio.run(run_ingest())
     else:
         print(f"'{args.command}' arrives in a later batch — not wired yet.")
 
