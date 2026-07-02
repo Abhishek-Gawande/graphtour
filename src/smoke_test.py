@@ -24,10 +24,14 @@ async def main() -> None:
     )
     print("[graphtour] remember() ok")
 
-    results = await cognee.recall(query_text="What is graphtour?")
+    results = await cognee.recall(
+        query_text="What is graphtour?",
+        datasets=["graphtour_smoke"],  # scope to the dataset we just wrote
+    )
     print("[graphtour] recall() ->")
     for r in results:
-        print("   ", r)
+        text = r.get("text") if isinstance(r, dict) else getattr(r, "text", r)
+        print("   ", text)
 
     await disconnect()
 

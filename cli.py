@@ -9,9 +9,12 @@ Batch 0: only `smoke` is wired. ingest/ask arrive in later batches.
 
 import argparse
 import asyncio
+import sys
 
 
 def main() -> None:
+    # Windows consoles default to cp1252, which chokes on unicode in LLM output.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(prog="graphtour")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("smoke", help="verify the Cognee backend connection")
