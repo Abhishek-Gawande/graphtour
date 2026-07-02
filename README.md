@@ -1,12 +1,12 @@
 # graphtour
 
-> *Never ask "who knows this code?" again.* graphtour turns any repo into a queryable graph memory — powered by [Cognee](https://www.cognee.ai).
+> *Never ask "who knows this code?" again.* graphtour turns any repo into a queryable graph memory , powered by [Cognee](https://www.cognee.ai).
 
-Ask your codebase **"what breaks if I change this?"** — graphtour ingests a repo's
+Ask your codebase **"what breaks if I change this?"** graphtour ingests a repo's
 code, commits, and PRs into a Cognee knowledge graph and answers by *traversing*
 dependencies, ownership, and history instead of grepping.
 
-Built for the **WeMakeDevs × Cognee** hackathon — *"The Hangover Part AI: Where's My Context?"*
+Built for the **WeMakeDevs × Cognee** hackathon 
 
 ---
 
@@ -22,7 +22,7 @@ edges between files, commits, authors, and PRs. A graph can.
 
 ## The solution
 
-graphtour models a codebase as what it actually is — a graph — and uses Cognee's
+graphtour models a codebase as what it actually is , a graph and uses Cognee's
 memory lifecycle to keep that graph honest as the repo evolves:
 
 | Cognee verb | graphtour uses it to |
