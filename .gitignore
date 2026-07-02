@@ -23,6 +23,9 @@ demo/target_repo/
 # Claude Code local settings (personal, machine-specific)
 .claude/settings.local.json
 
+# Personal planning notes — never push
+PLAN.md
+
 # OS / editor
 .DS_Store
 Thumbs.db
