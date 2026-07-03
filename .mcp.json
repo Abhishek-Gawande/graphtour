@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "graphtour": {
+      "command": "python",
+      "args": ["mcp_server.py"]
+    }
+  }
+}

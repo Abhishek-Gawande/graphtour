@@ -23,6 +23,10 @@ def main() -> None:
     ask.add_argument("question")
     ask.add_argument("--mode", choices=["impact", "ownership", "provenance", "auto"],
                      default="auto", help="which traversal lens to use")
+    sub.add_parser("improve", help="enrich/re-weight the repo graph")
+    forget = sub.add_parser("forget", help="surgically delete a dataset's memory")
+    forget.add_argument("--dataset", required=True)
+    sub.add_parser("sync", help="repo changed: forget stale graph, re-ingest, improve")
 
     args = parser.parse_args()
 
@@ -38,8 +42,18 @@ def main() -> None:
         from src.recall import run_ask
 
         asyncio.run(run_ask(args.question, mode=args.mode))
-    else:
-        print(f"'{args.command}' arrives in a later batch — not wired yet.")
+    elif args.command == "improve":
+        from src.lifecycle import run_improve
+
+        asyncio.run(run_improve())
+    elif args.command == "forget":
+        from src.lifecycle import run_forget
+
+        asyncio.run(run_forget(args.dataset))
+    elif args.command == "sync":
+        from src.lifecycle import run_sync
+
+        asyncio.run(run_sync())
 
 
 if __name__ == "__main__":
