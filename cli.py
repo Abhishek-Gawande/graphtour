@@ -27,6 +27,7 @@ def main() -> None:
     forget = sub.add_parser("forget", help="surgically delete a dataset's memory")
     forget.add_argument("--dataset", required=True)
     sub.add_parser("sync", help="repo changed: forget stale graph, re-ingest, improve")
+    sub.add_parser("graph", help="render the knowledge graph to demo/graph.html")
 
     args = parser.parse_args()
 
@@ -54,6 +55,10 @@ def main() -> None:
         from src.lifecycle import run_sync
 
         asyncio.run(run_sync())
+    elif args.command == "graph":
+        from src.visualize import run_graph
+
+        run_graph()
 
 
 if __name__ == "__main__":
