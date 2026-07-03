@@ -52,11 +52,22 @@ python cli.py smoke         # verify the connection
 ## Status
 
 - [x] Batch 0  scaffold, config switch, connection smoke test
-- [ ] Batch 1  ingest a repo into the graph
-- [ ] Batch 2  impact / ownership / provenance queries
-- [ ] Batch 3  `improve()` + `forget()` on repo changes
+- [x] Batch 1  ingest a repo into the graph
+- [x] Batch 2  impact / ownership / provenance queries
+- [x] Batch 3  MCP server for coding agents + `improve()` / `forget()` / `sync`
 - [ ] Batch 4  UX + demo
 - [ ] Batch 5  README polish, demo video, submission
+
+## Use it from Claude Code (MCP)
+
+graphtour is also an MCP server, so coding agents get persistent codebase memory:
+
+```bash
+claude mcp add graphtour -- python mcp_server.py
+```
+
+Tools exposed: `ask_impact`, `ask_ownership`, `ask_provenance`, `ask_codebase`,
+and `remember_insight` (agents store durable insights that outlive their context window).
 
 ---
 

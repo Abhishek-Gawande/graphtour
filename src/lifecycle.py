@@ -15,16 +15,34 @@ from __future__ import annotations
 from src.ingest import DATASET
 
 
-async def run_improve(dataset: str = DATASET) -> None:
-    """Ask Cognee to enrich and re-weight the dataset's graph."""
+async def improve_graph(dataset: str = DATASET) -> str:
+    """Enrich/re-weight the dataset's graph. Assumes caller connected.
+
+    Cognee Cloud does not expose /api/v1/improve yet (verified via the tenant's
+    OpenAPI spec), so on cloud we fall back to cognify re-enrichment — the same
+    graph-building pass improve() wraps. Self-hosted uses improve() natively.
+    """
     import cognee
 
+    try:
+        await cognee.improve(dataset)
+        return "improve() complete — graph enriched/re-weighted"
+    except RuntimeError as err:
+        if "404" not in str(err):
+            raise
+        await cognee.cognify(datasets=[dataset])
+        return (
+            "improve() not exposed by Cognee Cloud yet — fell back to cognify "
+            "re-enrichment on the dataset (same graph-building pass improve wraps)"
+        )
+
+
+async def run_improve(dataset: str = DATASET) -> None:
     from src.config import connect, disconnect
 
     await connect()
     print(f"[graphtour] improve() running on '{dataset}' — enriching the graph...")
-    await cognee.improve(dataset)
-    print("[graphtour] improve() complete — graph enriched/re-weighted")
+    print(f"[graphtour] {await improve_graph(dataset)}")
     await disconnect()
 
 
@@ -63,6 +81,6 @@ async def run_sync() -> None:
     print("[graphtour] sync: remember() fresh slice...")
     await cognee.remember(file_docs + commit_docs, dataset_name=DATASET)
     print("[graphtour] sync: improve() to enrich the rebuilt graph...")
-    await cognee.improve(DATASET)
+    print(f"[graphtour] sync: {await improve_graph(DATASET)}")
     print("[graphtour] sync complete — memory matches the repo again")
     await disconnect()

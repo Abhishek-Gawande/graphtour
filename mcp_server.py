@@ -35,8 +35,10 @@ async def _ensure_connected() -> None:
     if not _connected:
         from src.config import connect
 
+        print("[graphtour-mcp] connecting to Cognee...", file=sys.stderr, flush=True)
         with _shield():
             await connect()
+        print("[graphtour-mcp] connected", file=sys.stderr, flush=True)
         _connected = True
 
 
