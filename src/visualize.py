@@ -15,7 +15,7 @@ from pathlib import Path
 
 import requests
 
-from src.ingest import DATASET
+from src.state import active_dataset
 
 OUT_PATH = Path(__file__).resolve().parent.parent / "demo" / "graph.html"
 
@@ -62,7 +62,7 @@ def fetch_graph() -> tuple[list[dict], list[dict]]:
     headers = {"X-Api-Key": os.environ["COGNEE_API_KEY"]}
 
     datasets = requests.get(f"{base}/api/v1/datasets/", headers=headers, timeout=30).json()
-    repo = next(d for d in datasets if d["name"] == DATASET)
+    repo = next(d for d in datasets if d["name"] == active_dataset())
     data = requests.get(
         f"{base}/api/v1/datasets/{repo['id']}/graph", headers=headers, timeout=120
     ).json()
@@ -87,7 +87,7 @@ def render(nodes: list[dict], edges: list[dict], out_path: Path = OUT_PATH) -> P
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(
         HTML.format(
-            dataset=DATASET,
+            dataset=active_dataset(),
             n_nodes=len(vis_nodes),
             n_edges=len(vis_edges),
             nodes_json=json.dumps(vis_nodes),

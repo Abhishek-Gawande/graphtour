@@ -10,7 +10,7 @@ Run:  python cli.py ask "what breaks if I change search.py?" --mode impact
 
 from __future__ import annotations
 
-from src.ingest import DATASET
+from src.state import active_dataset
 
 MENTOR_PROMPT = (
     "You are graphtour, a codebase onboarding mentor. Answer from the knowledge "
@@ -50,7 +50,7 @@ async def ask(question: str, mode: str = "auto", top_k: int = 20) -> str:
 
     results = await cognee.recall(
         query_text=MODES[mode].format(q=question),
-        datasets=[DATASET],
+        datasets=[active_dataset()],
         top_k=top_k,
         system_prompt=MENTOR_PROMPT,
     )
@@ -67,6 +67,6 @@ async def run_ask(question: str, mode: str = "auto") -> None:
     from src.config import connect, disconnect
 
     settings = await connect()
-    print(f"[graphtour] {mode} query against '{DATASET}' ({settings.backend})\n")
+    print(f"[graphtour] {mode} query against '{active_dataset()}' ({settings.backend})\n")
     print(await ask(question, mode=mode))
     await disconnect()

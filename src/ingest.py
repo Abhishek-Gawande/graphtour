@@ -20,7 +20,6 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent / "demo" / "target_repo"
 REPO_NAME = "cognee"
-DATASET = "graphtour_repo"
 
 # The focused slice: Cognee's own memory-lifecycle implementation.
 # Demo poetry: graphtour explains how cognee's remember/recall/forget/improve work.
@@ -140,22 +139,24 @@ def collect_commit_docs(repo_root: Path = REPO_ROOT, max_commits: int = MAX_COMM
 
 # ── main entrypoint ─────────────────────────────────────────────────────────
 
-async def run_ingest() -> None:
+async def run_ingest(dataset: str | None = None) -> None:
     import cognee
 
     from src.config import connect, disconnect
+    from src.state import active_dataset
 
     if not REPO_ROOT.exists():
         raise RuntimeError(f"Target repo not found at {REPO_ROOT}. Clone it first.")
 
+    target = dataset or active_dataset()
     file_docs = collect_file_docs()
     commit_docs = collect_commit_docs()
     print(f"[graphtour] extracted {len(file_docs)} file docs, {len(commit_docs)} commit docs")
 
     settings = await connect()
-    print(f"[graphtour] connected to '{settings.backend}' backend — ingesting into '{DATASET}'")
+    print(f"[graphtour] connected to '{settings.backend}' backend — ingesting into '{target}'")
 
-    await cognee.remember(file_docs + commit_docs, dataset_name=DATASET)
+    await cognee.remember(file_docs + commit_docs, dataset_name=target)
     print("[graphtour] remember() accepted — cognify building the graph server-side")
 
     await disconnect()

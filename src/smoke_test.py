@@ -17,16 +17,18 @@ async def main() -> None:
     settings = await connect()
     print(f"[graphtour] connected to '{settings.backend}' backend")
 
+    # NOTE: never point this at a previously forgotten dataset name — Cognee
+    # Cloud leaves forgotten names in a broken state and remember() 409s.
     await cognee.remember(
         "graphtour is a codebase onboarding agent built on Cognee for the "
         "WeMakeDevs x Cognee hackathon.",
-        dataset_name="graphtour_smoke",
+        dataset_name="graphtour_scratch",
     )
     print("[graphtour] remember() ok")
 
     results = await cognee.recall(
         query_text="What is graphtour?",
-        datasets=["graphtour_smoke"],  # scope to the dataset we just wrote
+        datasets=["graphtour_scratch"],  # scope to the dataset we just wrote
     )
     print("[graphtour] recall() ->")
     for r in results:

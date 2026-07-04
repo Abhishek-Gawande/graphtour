@@ -21,8 +21,8 @@ import asyncio
 from mcp.server.fastmcp import FastMCP
 
 from src import cloud_rest
-from src.ingest import DATASET
 from src.recall import MENTOR_PROMPT, MODES
+from src.state import active_dataset
 
 mcp = FastMCP("graphtour")
 
@@ -69,8 +69,8 @@ async def remember_insight(insight: str) -> str:
     """Store a durable insight about the codebase (a gotcha, a decision, a
     convention) so future agent sessions recall it. This is how the memory
     outlives your context window."""
-    await asyncio.to_thread(cloud_rest.remember_entry, insight)
-    return f"Remembered into '{DATASET}'. Future sessions will recall this."
+    await asyncio.to_thread(cloud_rest.remember_text, insight)
+    return f"Remembered into '{active_dataset()}'. Future sessions will recall this."
 
 
 if __name__ == "__main__":

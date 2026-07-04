@@ -4,7 +4,7 @@ The Python SDK's serve() hangs when running inside an MCP stdio subprocess
 (verified: works in CLI and plain anyio, hangs under FastMCP even with a
 thread-isolated loop). The tenant's REST API works everywhere, so the MCP
 server talks to it directly. Field names come from the tenant's OpenAPI spec
-(RecallPayloadDTO is camelCase; RememberEntryRequest is snake_case).
+(RecallPayloadDTO is camelCase; /remember is multipart like the SDK sends).
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import os
 
 import requests
 
-from src.ingest import DATASET
+from src.state import active_dataset
 
 
 def _conn() -> tuple[str, dict]:
@@ -27,14 +27,14 @@ def _conn() -> tuple[str, dict]:
     return base.rstrip("/"), {"X-Api-Key": key}
 
 
-def recall(query: str, system_prompt: str, dataset: str = DATASET, top_k: int = 20) -> str:
+def recall(query: str, system_prompt: str, dataset: str | None = None, top_k: int = 20) -> str:
     base, headers = _conn()
     resp = requests.post(
         f"{base}/api/v1/recall",
         headers=headers,
         json={
             "query": query,
-            "datasets": [dataset],
+            "datasets": [dataset or active_dataset()],
             "topK": top_k,
             "systemPrompt": system_prompt,
         },
@@ -51,12 +51,14 @@ def recall(query: str, system_prompt: str, dataset: str = DATASET, top_k: int = 
     return "\n".join(texts) if texts else "(no answer from the graph)"
 
 
-def remember_entry(entry: str, dataset: str = DATASET) -> None:
+def remember_text(text: str, dataset: str | None = None) -> None:
+    """Store one text document, same multipart shape the SDK's remember() sends."""
     base, headers = _conn()
     resp = requests.post(
-        f"{base}/api/v1/remember/entry",
+        f"{base}/api/v1/remember",
         headers=headers,
-        json={"entry": entry, "dataset_name": dataset},
-        timeout=120,
+        files=[("data", ("data.txt", text.encode("utf-8"), "text/plain"))],
+        data={"datasetName": dataset or active_dataset()},
+        timeout=300,
     )
     resp.raise_for_status()

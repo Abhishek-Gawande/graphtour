@@ -10,6 +10,9 @@ __pycache__/
 venv/
 env/
 
+# Local runtime state (active dataset version pointer)
+.graphtour_state.json
+
 # Cognee / local stores & caches
 .cognee_system/
 .data_storage/
