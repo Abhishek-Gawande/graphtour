@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(python -c ' *)",
-      "Bash(python cli.py ask \"who has worked on the search module?\" --mode ownership)",
-      "Bash(git commit -q -m 'fix: versioned datasets — survive Cognee Cloud'\\\\''s forgotten-name 409 *)"
-    ]
-  }
-}
