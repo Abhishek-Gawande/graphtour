@@ -56,9 +56,20 @@ async def connect() -> Settings:
             )
         await cognee.serve(url=settings.cloud_url, api_key=settings.api_key)
     elif settings.backend == "local":
-        # Self-hosted: nothing to serve(); local stores are used directly.
-        # LLM key is read by cognee from the environment. Verified in a later batch.
-        pass
+        # Self-hosted: no serve(); embedded stores + local cognify runs.
+        if not settings.llm_api_key:
+            raise RuntimeError(
+                "Local backend selected but LLM_API_KEY is unset. "
+                "Fill it in .env (see .env.example)."
+            )
+        # cognee reads the LLM key from the environment (dotenv already loaded it,
+        # this keeps it explicit and works even if .env discovery ever fails).
+        os.environ.setdefault("LLM_API_KEY", settings.llm_api_key)
+        # Keep all local stores inside the project, NOT the SDK's install dir
+        # (Windows Store Python site-packages is effectively read-only).
+        local_root = os.path.join(os.path.dirname(os.path.dirname(__file__)), "cognee_data")
+        cognee.config.system_root_directory(os.path.join(local_root, "system"))
+        cognee.config.data_root_directory(os.path.join(local_root, "data"))
     else:
         raise RuntimeError(
             f"Unknown COGNEE_BACKEND={settings.backend!r}. Use 'cloud' or 'local'."
