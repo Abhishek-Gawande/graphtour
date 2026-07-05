@@ -34,6 +34,50 @@ memory lifecycle to keep that graph honest as the repo evolves:
 
 **Demo:** graphtour onboards you to *Cognee's own* repository.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph machine [your machine]
+        repo["repo clone<br/>(code + git history)"]
+        ingest["src/ingest.py<br/>AST parse + git log<br/>= 127 fact documents"]
+        cli["cli.py<br/>(humans)"]
+        mcp["mcp_server.py<br/>(coding agents, MCP stdio)"]
+        agent["Claude Code /<br/>any MCP client"]
+        viz["demo/graph.html<br/>interactive graph viz"]
+    end
+    subgraph tenant [Cognee Cloud tenant]
+        kg[("knowledge graph + vectors<br/>514 nodes / 2084 edges")]
+    end
+    repo --> ingest
+    ingest -- "cognee.remember()" --> kg
+    cli -- "recall / improve / forget / sync" --> kg
+    agent -- stdio --> mcp
+    mcp -- "REST (X-Api-Key)" --> kg
+    kg -- "GET /datasets/{id}/graph" --> viz
+```
+
+How the pieces earn their place:
+
+- **Fact documents, not raw code.** `src/ingest.py` AST-parses every file and
+  reads `git log`, then writes compact English sentences ("Commit abc123 was
+  authored by NAME... it modified files F1, F2"). Cognee's cognify pass turns
+  those into exactly the edges the queries need (imports, authored, modified),
+  cleaner and roughly 10x cheaper than feeding source code to an LLM.
+- **Lenses over recall.** Impact, ownership, and provenance are the same
+  `cognee.recall()` call with mode-specific prompt templates (`src/recall.py`)
+  that steer traversal toward the right edge types, plus a strict system
+  prompt that forbids inventing files, people, or commits.
+- **The MCP server speaks REST, not the SDK.** `cognee.serve()` hangs inside
+  MCP stdio subprocesses on Windows (stdout is the JSON-RPC wire, and the SDK
+  blocks). So `mcp_server.py` talks to the tenant's REST API through
+  `src/cloud_rest.py`: instant startup, nothing can pollute the protocol
+  stream, same graph.
+- **Versioned datasets** (`src/state.py`). Cognee Cloud leaves a forgotten
+  dataset name unusable, so `sync` writes `graphtour_repo_v2`, `_v3`, ...,
+  switches an active-dataset pointer, and only then forgets the old version.
+  A failed sync can never leave the memory empty.
+
 ## Backends
 
 One code path, two backends , selected by `COGNEE_BACKEND` in `.env`:
